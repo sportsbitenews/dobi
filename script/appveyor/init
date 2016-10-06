@@ -1,0 +1,9 @@
+#!/bin/bash
+set -eu
+
+appveyor DownloadFile https://github.com/Masterminds/glide/releases/download/v0.12.3/glide-v0.12.3-windows-amd64.zip
+7z x glide-v0.12.3-windows-amd64.zip > nul
+echo $PATH
+pwd
+cp windows-amd64/glide.exe
+

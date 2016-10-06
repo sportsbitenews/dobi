@@ -1,0 +1,8 @@
+build: false
+
+init:
+  - C:\msys64\usr\bin\bash -lc "cd $APPVEYOR_BUILD_FOLDER && script/appveyor/init"
+
+
+test_script:
+  - C:\msys64\usr\bin\bash -lc "cd $APPVEYOR_BUILD_FOLDER && script/appveyor/test"
