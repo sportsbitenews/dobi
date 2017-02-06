@@ -2,6 +2,7 @@
 
 set -eu
 
+echo $DOCKER_HOST
 docker version
 mkdir -p circle .dobi/images
 
@@ -9,4 +10,4 @@ docker build -t dobi-dev -f dockerfiles/Dockerfile.build .
 docker run \
     -v $PWD:/go/src/github.com/dnephin/dobi \
     dobi-dev \
-    bash -ec "glide install; go build -o circle/dobi ."
+    bash -ec "pwd; ls; glide install; go build -o circle/dobi ."

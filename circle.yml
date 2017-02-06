@@ -1,28 +1,41 @@
 
-machine:
-  pre:
-    - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
-  services:
-    - docker
-  environment:
-    DOCKER_API_VERSION: '1.22'
+version: 2
 
-general:
-  branches:
-    ignore: [gh-pages]
+jobs:
+  build:
+    docker:
+      - image: 'docker:17.04-git'
+    working_directory: ~/dobi
+    steps:
+      - checkout
+      - setup_remote_docker
+      # TODO: load cache
+      - run: |
+          set -x
+          docker run -d --privileged -p 3838:3838 --name dind --rm docker:17.04-dind -H 0.0.0.0:3838
+          sleep 10
+          timeout -t 60 docker logs dind || true
+          export DOCKER_HOST=tcp://$(echo $DOCKER_HOST | awk -F'[/:]' '{print $4}'):3838
+          echo $DOCKER_HOST
+          script/ci-deps
+          script/ci-run
 
-dependencies:
-  override: [script/ci-deps]
-  cache_directories: [vendor]
+#general:
+#  branches:
+#    ignore: [gh-pages]
 
-test:
-  override:
-    - script/ci-run:
-        parallel: true
+#dependencies:
+#  override: [script/ci-deps]
+#  cache_directories: [vendor]
 
-deployment:
-  release:
-    tag: /v[0-9]+(\.[0-9]+)*/
-    commands:
-      - 'docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS'
-      - 'DOBI_EXEC_ID=release circle/dobi release'
+#test:
+#  override:
+#    - script/ci-run:
+#        parallel: true
+#
+#deployment:
+#  release:
+#    tag: /v[0-9]+(\.[0-9]+)*/
+#    commands:
+#      - 'docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS'
+#      - 'DOBI_EXEC_ID=release circle/dobi release'
