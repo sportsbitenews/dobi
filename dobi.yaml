@@ -32,8 +32,9 @@ image=builder:
     dockerfile: Dockerfile.build
 
 image=linter:
-    image: dobi-linter
-    dockerfile: dockerfiles/Dockerfile.lint
+    image: dnephin/gometalinter
+    tags: [v1]
+    pull: once
 
 image=dist-img:
     image: dnephin/dobi
@@ -95,7 +96,17 @@ job=test-unit:
 job=lint:
     use: linter
     mounts: [source]
+    entrypoint: 'sh -c "gometalinter $PACKAGES"'
+    env: ['PACKAGES={env.PACKAGES}']
+    depends: ['go-packages:capture(PACKAGES)']
+    working-dir: /go/src/github.com/dnephin/dobi
+    interactive: true
     description: "Run style checks"
+
+job=go-packages:
+    use: builder
+    mounts: [source]
+    command: 'bash -c "glide nv | xargs"'
 
 job=github-release:
     use: releaser
