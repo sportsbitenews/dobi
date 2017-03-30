@@ -19,9 +19,16 @@ import:
   subpackages:
   - nat
 - package: github.com/docker/docker
+  version: 17ec46a24316f59c808c112e3ca46d7c442a785a
   subpackages:
+  - pkg/archive
   - pkg/jsonmessage
   - pkg/term
   - runconfig/opts
+- package: github.com/docker/cli
+  subpackages:
+  - cli/command/image/build
 - package: github.com/dnephin/configtf
 - package: github.com/dnephin/go-os-user
+- package: github.com/pkg/errors
+  version: ^0.8.0
